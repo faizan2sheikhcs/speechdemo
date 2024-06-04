@@ -1,0 +1,5 @@
+streamlit
+azure-cognitiveservices-speech
+python-dotenv
+openai==1.12.0
+requests
