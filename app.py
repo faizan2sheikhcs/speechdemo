@@ -129,45 +129,35 @@ if 'text_input' not in st.session_state:
 if 'generated_script' not in st.session_state:
     st.session_state.generated_script = ""
 
-# Create a two-column layout with a wider gap
-col1, _, col2 = st.columns([2, 0.5, 2])
+st.title("Text to Speech Converter")
 
-with col1:
-    st.title("Text to Speech Converter")
-    st.write("Enter topic for video script generation")
-    video_topic = st.text_input("Enter your video topic here:")
+st.write("Enter topic for video script generation")
+video_topic = st.text_input("Enter your video topic here:")
 
-    if st.button('Generate script'):
-        response = get_chat_response(video_topic)
-        st.session_state.generated_script = response
-        st.session_state.text_input = response  # Initialize text input with the generated script
+if st.button('Generate script'):
+    response = get_chat_response(video_topic)
+    st.session_state.generated_script = response
+    st.session_state.text_input = response  # Initialize text input with the generated script
 
-    # Persist the text input field
-    st.session_state.text_input = st.text_area(label="Enter your text here:", value=st.session_state.text_input)
+# Persist the text input field
+st.session_state.text_input = st.text_area(label="Enter your text here:", value=st.session_state.text_input)
 
-    selected_language = st.selectbox("Select Language", list(languages_and_voices.keys()))
-    selected_voice = st.selectbox("Select Voice", languages_and_voices[selected_language])
+selected_language = st.selectbox("Select Language", list(languages_and_voices.keys()))
+selected_voice = st.selectbox("Select Voice", languages_and_voices[selected_language])
 
-    convert_button_clicked = st.button("Convert to Speech")
-
-# Add a vertical space and a black line for separation
-with _:
-    st.markdown("<div style='height: 100%; border-left: 100px solid black;'></div>", unsafe_allow_html=True)
-
-if convert_button_clicked:
-    with col2:
-        if st.session_state.text_input:
-            translated_text = translate_text(st.session_state.text_input, selected_language, OPENAI_MODEL_DEPLOYMENT)
-            st.write(f"Translated English text to {selected_language}")
-            st.write(translated_text)
-            output_file = text_to_speech(translated_text, TTS_AZURE_API_KEY, TTS_AZURE_REGION, selected_voice)
-            st.write('Generated Audio ...')
-            if output_file:
-                audio_file = open(output_file, 'rb')
-                audio_bytes = audio_file.read()
-                st.audio(audio_bytes, format='audio/wav')
-            else:
-                st.error("An error occurred while converting the text to speech.")
+if st.button("Convert to Speech"):
+    if st.session_state.text_input:
+        translated_text = translate_text(st.session_state.text_input, selected_language, OPENAI_MODEL_DEPLOYMENT)
+        st.write(f"Translated english text to {selected_language}")
+        st.write(translated_text)
+        output_file = text_to_speech(translated_text, TTS_AZURE_API_KEY, TTS_AZURE_REGION, selected_voice)
+        st.write('Generated Audio ...')
+        if output_file:
+            audio_file = open(output_file, 'rb')
+            audio_bytes = audio_file.read()
+            st.audio(audio_bytes, format='audio/wav')
         else:
-            st.error("Please enter some text to convert.")
+            st.error("An error occurred while converting the text to speech.")
+    else:
+        st.error("Please enter some text to convert.")
 
