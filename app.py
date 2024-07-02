@@ -170,15 +170,4 @@ if convert_button_clicked:
                 st.error("An error occurred while converting the text to speech.")
         else:
             st.error("Please enter some text to convert.")
-        st.write(f"Translated english text to {selected_language}")
-        st.write(translated_text)
-        output_file = text_to_speech(translated_text, TTS_AZURE_API_KEY, TTS_AZURE_REGION, selected_voice)
-        st.write('Generated Audio ...')
-        if output_file:
-            audio_file = open(output_file, 'rb')
-            audio_bytes = audio_file.read()
-            st.audio(audio_bytes, format='audio/wav')
-        else:
-            st.error("An error occurred while converting the text to speech.")
-    else:
-        st.error("Please enter some text to convert.")
+
